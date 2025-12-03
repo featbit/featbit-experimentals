@@ -9,6 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add CORS for React dev server
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactDev", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Add PostgreSQL DbContext
 builder.Services.AddDbContext<EventsDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL")));
@@ -16,6 +27,7 @@ builder.Services.AddDbContext<EventsDbContext>(options =>
 // Add application services
 builder.Services.AddScoped<IEventsCleanupService, EventsCleanupService>();
 builder.Services.AddScoped<IProjectEnvironmentService, ProjectEnvironmentService>();
+builder.Services.AddScoped<IHierarchyService, HierarchyService>();
 
 var app = builder.Build();
 
@@ -26,9 +38,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Enable CORS
+app.UseCors("AllowReactDev");
+
 app.UseHttpsRedirection();
 
 // Map endpoints
 app.MapEventsEndpoints();
+app.MapHierarchyEndpoints();
 
 app.Run();
