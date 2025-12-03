@@ -15,6 +15,7 @@ builder.Services.AddDbContext<EventsDbContext>(options =>
 
 // Add application services
 builder.Services.AddScoped<IEventsCleanupService, EventsCleanupService>();
+builder.Services.AddScoped<IProjectEnvironmentService, ProjectEnvironmentService>();
 
 var app = builder.Build();
 

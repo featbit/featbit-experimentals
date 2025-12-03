@@ -1,5 +1,6 @@
 using EventsCleanupApi.Data;
 using EventsCleanupApi.DTOs;
+using EventsCleanupApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventsCleanupApi.Services;
@@ -31,33 +32,21 @@ public class EventsCleanupService : IEventsCleanupService
         };
     }
 
-    public async Task<long> PreviewDeleteAsync(DeleteEventsRequest request)
+    #region By Timestamp
+
+    public async Task<long> PreviewDeleteByTimestampAsync(DeleteByTimestampRequest request)
     {
-        var query = BuildQuery(request);
+        var query = BuildTimestampQuery(request);
         return await query.LongCountAsync();
     }
 
-    public async Task<int> DeleteEventsAsync(DeleteEventsRequest request)
+    public async Task<int> DeleteByTimestampAsync(DeleteByTimestampRequest request)
     {
-        var query = BuildQuery(request);
+        var query = BuildTimestampQuery(request);
         return await query.ExecuteDeleteAsync();
     }
 
-    public async Task<int> DeleteFlagInsightsAsync(DateTime beforeDate)
-    {
-        return await _db.Events
-            .Where(e => e.EventType == "FlagValue" && e.Timestamp < beforeDate)
-            .ExecuteDeleteAsync();
-    }
-
-    public async Task<int> DeleteCustomEventsAsync(DateTime beforeDate)
-    {
-        return await _db.Events
-            .Where(e => e.EventType != "FlagValue" && e.Timestamp < beforeDate)
-            .ExecuteDeleteAsync();
-    }
-
-    private IQueryable<Models.Event> BuildQuery(DeleteEventsRequest request)
+    private IQueryable<Event> BuildTimestampQuery(DeleteByTimestampRequest request)
     {
         var query = _db.Events.AsQueryable();
 
@@ -66,16 +55,122 @@ public class EventsCleanupService : IEventsCleanupService
             query = query.Where(e => e.Timestamp < request.BeforeDate.Value);
         }
 
+        if (request.AfterDate.HasValue)
+        {
+            query = query.Where(e => e.Timestamp >= request.AfterDate.Value);
+        }
+
         if (!string.IsNullOrEmpty(request.EventType))
         {
             query = query.Where(e => e.EventType == request.EventType);
         }
 
-        if (!string.IsNullOrEmpty(request.EnvId))
+        return query;
+    }
+
+    #endregion
+
+    #region By Environment & Timestamp
+
+    public async Task<long> PreviewDeleteByEnvTimestampAsync(DeleteByEnvTimestampRequest request)
+    {
+        var query = BuildEnvTimestampQuery(request);
+        return await query.LongCountAsync();
+    }
+
+    public async Task<int> DeleteByEnvTimestampAsync(DeleteByEnvTimestampRequest request)
+    {
+        var query = BuildEnvTimestampQuery(request);
+        return await query.ExecuteDeleteAsync();
+    }
+
+    private IQueryable<Event> BuildEnvTimestampQuery(DeleteByEnvTimestampRequest request)
+    {
+        var query = _db.Events.Where(e => e.EnvId == request.EnvId);
+
+        if (request.BeforeDate.HasValue)
         {
-            query = query.Where(e => e.EnvId == request.EnvId);
+            query = query.Where(e => e.Timestamp < request.BeforeDate.Value);
+        }
+
+        if (request.AfterDate.HasValue)
+        {
+            query = query.Where(e => e.Timestamp >= request.AfterDate.Value);
+        }
+
+        if (!string.IsNullOrEmpty(request.EventType))
+        {
+            query = query.Where(e => e.EventType == request.EventType);
         }
 
         return query;
     }
+
+    #endregion
+
+    #region By Environment & Feature Flag Key
+
+    public async Task<long> PreviewDeleteByEnvFlagKeyAsync(DeleteByEnvFlagKeyRequest request)
+    {
+        var query = BuildEnvFlagKeyQuery(request);
+        return await query.LongCountAsync();
+    }
+
+    public async Task<int> DeleteByEnvFlagKeyAsync(DeleteByEnvFlagKeyRequest request)
+    {
+        var query = BuildEnvFlagKeyQuery(request);
+        return await query.ExecuteDeleteAsync();
+    }
+
+    private IQueryable<Event> BuildEnvFlagKeyQuery(DeleteByEnvFlagKeyRequest request)
+    {
+        // Query using PostgreSQL JSONB operator to filter by featureFlagKey in properties
+        return _db.Events
+            .Where(e => e.EnvId == request.EnvId)
+            .Where(e => e.EventType == "FlagValue")
+            .Where(e => EF.Functions.JsonContains(
+                e.Properties!,
+                $"{{\"featureFlagKey\": \"{request.FeatureFlagKey}\"}}"));
+    }
+
+    #endregion
+
+    #region By Project
+
+    public async Task<long> PreviewDeleteByProjectAsync(DeleteByProjectRequest request, IEnumerable<string> envIds)
+    {
+        var query = BuildProjectQuery(request, envIds);
+        return await query.LongCountAsync();
+    }
+
+    public async Task<int> DeleteByProjectAsync(DeleteByProjectRequest request, IEnumerable<string> envIds)
+    {
+        var query = BuildProjectQuery(request, envIds);
+        return await query.ExecuteDeleteAsync();
+    }
+
+    private IQueryable<Event> BuildProjectQuery(DeleteByProjectRequest request, IEnumerable<string> envIds)
+    {
+        var envIdList = envIds.ToList();
+        var query = _db.Events.Where(e => envIdList.Contains(e.EnvId!));
+
+        if (request.BeforeDate.HasValue)
+        {
+            query = query.Where(e => e.Timestamp < request.BeforeDate.Value);
+        }
+
+        if (request.AfterDate.HasValue)
+        {
+            query = query.Where(e => e.Timestamp >= request.AfterDate.Value);
+        }
+
+        if (!string.IsNullOrEmpty(request.EventType))
+        {
+            query = query.Where(e => e.EventType == request.EventType);
+        }
+
+        return query;
+    }
+
+    #endregion
 }
