@@ -1,5 +1,6 @@
 using EventsCleanupApi.DTOs;
 using EventsCleanupApi.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EventsCleanupApi.Endpoints;
 
@@ -11,44 +12,35 @@ public static class EventsEndpoints
 
         // Summary
         group.MapGet("/summary", GetSummary)
-            .WithName("GetEventsSummary")
-            .WithOpenApi();
+            .WithName("GetEventsSummary");
 
         // By Timestamp
         var byTimestamp = group.MapGroup("/by-timestamp").WithTags("By Timestamp");
         byTimestamp.MapPost("/preview", PreviewDeleteByTimestamp)
-            .WithName("PreviewDeleteByTimestamp")
-            .WithOpenApi();
+            .WithName("PreviewDeleteByTimestamp");
         byTimestamp.MapDelete("/", DeleteByTimestamp)
-            .WithName("DeleteByTimestamp")
-            .WithOpenApi();
+            .WithName("DeleteByTimestamp");
 
         // By Environment & Timestamp
         var byEnvTimestamp = group.MapGroup("/by-env-timestamp").WithTags("By Environment & Timestamp");
         byEnvTimestamp.MapPost("/preview", PreviewDeleteByEnvTimestamp)
-            .WithName("PreviewDeleteByEnvTimestamp")
-            .WithOpenApi();
+            .WithName("PreviewDeleteByEnvTimestamp");
         byEnvTimestamp.MapDelete("/", DeleteByEnvTimestamp)
-            .WithName("DeleteByEnvTimestamp")
-            .WithOpenApi();
+            .WithName("DeleteByEnvTimestamp");
 
         // By Environment & Feature Flag Key
         var byEnvFlagKey = group.MapGroup("/by-env-flagkey").WithTags("By Environment & Flag Key");
         byEnvFlagKey.MapPost("/preview", PreviewDeleteByEnvFlagKey)
-            .WithName("PreviewDeleteByEnvFlagKey")
-            .WithOpenApi();
+            .WithName("PreviewDeleteByEnvFlagKey");
         byEnvFlagKey.MapDelete("/", DeleteByEnvFlagKey)
-            .WithName("DeleteByEnvFlagKey")
-            .WithOpenApi();
+            .WithName("DeleteByEnvFlagKey");
 
         // By Project
         var byProject = group.MapGroup("/by-project").WithTags("By Project");
         byProject.MapPost("/preview", PreviewDeleteByProject)
-            .WithName("PreviewDeleteByProject")
-            .WithOpenApi();
+            .WithName("PreviewDeleteByProject");
         byProject.MapDelete("/", DeleteByProject)
-            .WithName("DeleteByProject")
-            .WithOpenApi();
+            .WithName("DeleteByProject");
     }
 
     #region Summary
@@ -64,7 +56,7 @@ public static class EventsEndpoints
     #region By Timestamp
 
     private static async Task<IResult> PreviewDeleteByTimestamp(
-        DeleteByTimestampRequest request,
+        [FromBody] DeleteByTimestampRequest request,
         IEventsCleanupService service)
     {
         var count = await service.PreviewDeleteByTimestampAsync(request);
@@ -72,7 +64,7 @@ public static class EventsEndpoints
     }
 
     private static async Task<IResult> DeleteByTimestamp(
-        DeleteByTimestampRequest request,
+        [FromBody] DeleteByTimestampRequest request,
         IEventsCleanupService service)
     {
         var deletedCount = await service.DeleteByTimestampAsync(request);
@@ -88,7 +80,7 @@ public static class EventsEndpoints
     #region By Environment & Timestamp
 
     private static async Task<IResult> PreviewDeleteByEnvTimestamp(
-        DeleteByEnvTimestampRequest request,
+        [FromBody] DeleteByEnvTimestampRequest request,
         IEventsCleanupService service)
     {
         var count = await service.PreviewDeleteByEnvTimestampAsync(request);
@@ -96,7 +88,7 @@ public static class EventsEndpoints
     }
 
     private static async Task<IResult> DeleteByEnvTimestamp(
-        DeleteByEnvTimestampRequest request,
+        [FromBody] DeleteByEnvTimestampRequest request,
         IEventsCleanupService service)
     {
         var deletedCount = await service.DeleteByEnvTimestampAsync(request);
@@ -112,7 +104,7 @@ public static class EventsEndpoints
     #region By Environment & Feature Flag Key
 
     private static async Task<IResult> PreviewDeleteByEnvFlagKey(
-        DeleteByEnvFlagKeyRequest request,
+        [FromBody] DeleteByEnvFlagKeyRequest request,
         IEventsCleanupService service)
     {
         var count = await service.PreviewDeleteByEnvFlagKeyAsync(request);
@@ -120,7 +112,7 @@ public static class EventsEndpoints
     }
 
     private static async Task<IResult> DeleteByEnvFlagKey(
-        DeleteByEnvFlagKeyRequest request,
+        [FromBody] DeleteByEnvFlagKeyRequest request,
         IEventsCleanupService service)
     {
         var deletedCount = await service.DeleteByEnvFlagKeyAsync(request);
@@ -136,7 +128,7 @@ public static class EventsEndpoints
     #region By Project
 
     private static async Task<IResult> PreviewDeleteByProject(
-        DeleteByProjectRequest request,
+        [FromBody] DeleteByProjectRequest request,
         IEventsCleanupService eventsService,
         IProjectEnvironmentService projectService)
     {
@@ -153,7 +145,7 @@ public static class EventsEndpoints
     }
 
     private static async Task<IResult> DeleteByProject(
-        DeleteByProjectRequest request,
+        [FromBody] DeleteByProjectRequest request,
         IEventsCleanupService eventsService,
         IProjectEnvironmentService projectService)
     {

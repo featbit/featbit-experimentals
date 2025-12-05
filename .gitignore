@@ -265,3 +265,6 @@ __blobstorage__
 __queuestorage__
 __azurite_db*__.json
 .python_packages/
+
+# ASP.NET Core - Development settings with sensitive data
+appsettings.Development.json

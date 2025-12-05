@@ -50,6 +50,25 @@ DELETE FROM events
 WHERE "event" = 'FlagValue' AND "timestamp" < '2025-10-04 13:56:24.138';
 ```
 
+Delete flag insights for a specific environment and before a specific date:
+```sql
+DELETE FROM events
+WHERE "event" = 'FlagValue'
+AND properties->>'envId' = 'e73fff7b-af28-46cb-b770-a006cb770e6d'
+AND "timestamp" < '2025-10-04 13:56:24.138';
+```
+
+Delete flag insights for a specific project and before a specific date:
+1. Find the project you want to delete data for, and get its ID (project_id).
+2. Get all environment IDs associated with the project.
+```sql
+SELECT id FROM environments
+WHERE project_id = '{project_id}';
+```
+3. Delete events for those environment IDs. See the example above for environment-specific deletion.
+
+
+
 ## MongoDB
 
 ## ClickHouse 

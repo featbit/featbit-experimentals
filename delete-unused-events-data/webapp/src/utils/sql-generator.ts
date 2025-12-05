@@ -8,6 +8,31 @@ interface SqlGeneratorParams {
   eventType?: string;
 }
 
+/**
+ * Converts a datetime-local value (e.g., "2025-10-05T11:12") 
+ * to PostgreSQL timestamp format (e.g., "2025-10-05 11:12:00.000")
+ */
+function toPostgresTimestamp(dateTimeLocal: string): string {
+  // datetime-local format: "2025-10-05T11:12" or "2025-10-05T11:12:45"
+  // PostgreSQL format: "2025-10-05 11:12:45.000"
+  const normalized = dateTimeLocal.replace('T', ' ');
+  
+  // Check if seconds are included
+  const parts = normalized.split(':');
+  if (parts.length === 2) {
+    // Only hours and minutes, add seconds
+    return `${normalized}:00.000`;
+  } else if (parts.length === 3) {
+    // Has seconds, check for milliseconds
+    if (!normalized.includes('.')) {
+      return `${normalized}.000`;
+    }
+    return normalized;
+  }
+  
+  return normalized;
+}
+
 export function generateDeleteSql(params: SqlGeneratorParams): string {
   const { selection, beforeDate, afterDate, featureFlagKey, eventType } = params;
 
@@ -22,12 +47,12 @@ export function generateDeleteSql(params: SqlGeneratorParams): string {
     conditions.push(`"event" = '${eventType}'`);
   }
 
-  // Time range conditions
+  // Time range conditions - convert to PostgreSQL timestamp format
   if (beforeDate) {
-    conditions.push(`"timestamp" < '${beforeDate}'`);
+    conditions.push(`"timestamp" < '${toPostgresTimestamp(beforeDate)}'`);
   }
   if (afterDate) {
-    conditions.push(`"timestamp" >= '${afterDate}'`);
+    conditions.push(`"timestamp" >= '${toPostgresTimestamp(afterDate)}'`);
   }
 
   // Selection-based conditions

@@ -74,13 +74,22 @@ export function DeletePanel({ selection }: DeletePanelProps) {
           afterDate: afterDate || undefined,
           eventType: eventType || undefined,
         });
+      } else if (selection.envIds && selection.envIds.length > 0) {
+        // For project, organization, or workspace - call preview for each environment
+        let total = 0;
+        for (const envId of selection.envIds) {
+          const r = await api.previewDeleteByEnvTimestamp({
+            envId,
+            beforeDate: beforeDate || undefined,
+            afterDate: afterDate || undefined,
+            eventType: eventType || undefined,
+          });
+          total += r.eventsToDelete;
+        }
+        response = { eventsToDelete: total };
       } else {
-        // By timestamp only (for workspace, org, project)
-        response = await api.previewDeleteByTimestamp({
-          beforeDate: beforeDate || undefined,
-          afterDate: afterDate || undefined,
-          eventType: eventType || undefined,
-        });
+        // Fallback - no environments found
+        response = { eventsToDelete: 0 };
       }
 
       setPreviewCount(response?.eventsToDelete ?? 0);
@@ -132,12 +141,22 @@ export function DeletePanel({ selection }: DeletePanelProps) {
           afterDate: afterDate || undefined,
           eventType: eventType || undefined,
         });
+      } else if (selection.envIds && selection.envIds.length > 0) {
+        // For project, organization, or workspace - call delete for each environment
+        let total = 0;
+        for (const envId of selection.envIds) {
+          const r = await api.deleteByEnvTimestamp({
+            envId,
+            beforeDate: beforeDate || undefined,
+            afterDate: afterDate || undefined,
+            eventType: eventType || undefined,
+          });
+          total += r.deletedCount;
+        }
+        response = { deletedCount: total, message: `Deleted ${total} events` };
       } else {
-        response = await api.deleteByTimestamp({
-          beforeDate: beforeDate || undefined,
-          afterDate: afterDate || undefined,
-          eventType: eventType || undefined,
-        });
+        // Fallback - no environments found
+        response = { deletedCount: 0, message: 'No environments found' };
       }
 
       setResult({

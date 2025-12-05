@@ -1,13 +1,28 @@
 using EventsCleanupApi.Data;
 using EventsCleanupApi.Endpoints;
 using EventsCleanupApi.Services;
+using EventsCleanupApi.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure JSON options for DateTime handling
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNameCaseInsensitive = true;
+    options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    // Add custom DateTime converter to handle multiple formats including PostgreSQL timestamps
+    options.SerializerOptions.Converters.Add(new FlexibleNullableDateTimeConverter());
+    options.SerializerOptions.Converters.Add(new FlexibleDateTimeConverter());
+    options.SerializerOptions.WriteIndented = true;
+});
+
 // Add services to the container.
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();
 
 // Add CORS for React dev server
 builder.Services.AddCors(options =>
@@ -34,8 +49,17 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.MapOpenApi();
+    app.MapScalarApiReference(options =>
+    {
+        options
+            .WithTitle("Events Cleanup API")
+            .WithTheme(ScalarTheme.Purple);
+    });
+    
+    // Redirect root to Scalar documentation
+    app.MapGet("/", () => Results.Redirect("/scalar/v1"))
+        .ExcludeFromDescription();
 }
 
 // Enable CORS
@@ -44,6 +68,7 @@ app.UseCors("AllowReactDev");
 app.UseHttpsRedirection();
 
 // Map endpoints
+app.MapHealthEndpoints();
 app.MapEventsEndpoints();
 app.MapHierarchyEndpoints();
 

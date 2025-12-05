@@ -52,12 +52,18 @@ public class EventsCleanupService : IEventsCleanupService
 
         if (request.BeforeDate.HasValue)
         {
-            query = query.Where(e => e.Timestamp < request.BeforeDate.Value);
+            var utcDate = request.BeforeDate.Value.Kind == DateTimeKind.Unspecified
+                ? DateTime.SpecifyKind(request.BeforeDate.Value, DateTimeKind.Utc)
+                : request.BeforeDate.Value.ToUniversalTime();
+            query = query.Where(e => e.Timestamp < utcDate);
         }
 
         if (request.AfterDate.HasValue)
         {
-            query = query.Where(e => e.Timestamp >= request.AfterDate.Value);
+            var utcDate = request.AfterDate.Value.Kind == DateTimeKind.Unspecified
+                ? DateTime.SpecifyKind(request.AfterDate.Value, DateTimeKind.Utc)
+                : request.AfterDate.Value.ToUniversalTime();
+            query = query.Where(e => e.Timestamp >= utcDate);
         }
 
         if (!string.IsNullOrEmpty(request.EventType))
@@ -90,12 +96,18 @@ public class EventsCleanupService : IEventsCleanupService
 
         if (request.BeforeDate.HasValue)
         {
-            query = query.Where(e => e.Timestamp < request.BeforeDate.Value);
+            var utcDate = request.BeforeDate.Value.Kind == DateTimeKind.Unspecified
+                ? DateTime.SpecifyKind(request.BeforeDate.Value, DateTimeKind.Utc)
+                : request.BeforeDate.Value.ToUniversalTime();
+            query = query.Where(e => e.Timestamp < utcDate);
         }
 
         if (request.AfterDate.HasValue)
         {
-            query = query.Where(e => e.Timestamp >= request.AfterDate.Value);
+            var utcDate = request.AfterDate.Value.Kind == DateTimeKind.Unspecified
+                ? DateTime.SpecifyKind(request.AfterDate.Value, DateTimeKind.Utc)
+                : request.AfterDate.Value.ToUniversalTime();
+            query = query.Where(e => e.Timestamp >= utcDate);
         }
 
         if (!string.IsNullOrEmpty(request.EventType))
@@ -156,12 +168,18 @@ public class EventsCleanupService : IEventsCleanupService
 
         if (request.BeforeDate.HasValue)
         {
-            query = query.Where(e => e.Timestamp < request.BeforeDate.Value);
+            var utcDate = request.BeforeDate.Value.Kind == DateTimeKind.Unspecified
+                ? DateTime.SpecifyKind(request.BeforeDate.Value, DateTimeKind.Utc)
+                : request.BeforeDate.Value.ToUniversalTime();
+            query = query.Where(e => e.Timestamp < utcDate);
         }
 
         if (request.AfterDate.HasValue)
         {
-            query = query.Where(e => e.Timestamp >= request.AfterDate.Value);
+            var utcDate = request.AfterDate.Value.Kind == DateTimeKind.Unspecified
+                ? DateTime.SpecifyKind(request.AfterDate.Value, DateTimeKind.Utc)
+                : request.AfterDate.Value.ToUniversalTime();
+            query = query.Where(e => e.Timestamp >= utcDate);
         }
 
         if (!string.IsNullOrEmpty(request.EventType))

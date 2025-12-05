@@ -10,8 +10,7 @@ public static class HierarchyEndpoints
 
         group.MapGet("/", GetHierarchy)
             .WithName("GetHierarchy")
-            .WithDescription("Get all workspaces, organizations, projects, and environments in a hierarchical structure")
-            .WithOpenApi();
+            .WithDescription("Get all workspaces, organizations, projects, and environments in a hierarchical structure");
     }
 
     private static async Task<IResult> GetHierarchy(IHierarchyService service)

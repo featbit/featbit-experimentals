@@ -15,18 +15,11 @@ public class HierarchyService : IHierarchyService
 
     public async Task<WorkspaceHierarchyResponse> GetHierarchyAsync()
     {
-        // Load all data in parallel
-        var workspacesTask = _db.Workspaces.ToListAsync();
-        var organizationsTask = _db.Organizations.ToListAsync();
-        var projectsTask = _db.Projects.ToListAsync();
-        var environmentsTask = _db.Environments.ToListAsync();
-
-        await Task.WhenAll(workspacesTask, organizationsTask, projectsTask, environmentsTask);
-
-        var workspaces = await workspacesTask;
-        var organizations = await organizationsTask;
-        var projects = await projectsTask;
-        var environments = await environmentsTask;
+        // Load all data sequentially to avoid DbContext concurrent access issues
+        var workspaces = await _db.Workspaces.ToListAsync();
+        var organizations = await _db.Organizations.ToListAsync();
+        var projects = await _db.Projects.ToListAsync();
+        var environments = await _db.Environments.ToListAsync();
 
         // Build lookup dictionaries for efficient grouping
         var envsByProject = environments
