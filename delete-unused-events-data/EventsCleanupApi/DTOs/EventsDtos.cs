@@ -61,6 +61,16 @@ public record DeleteByEnvFlagKeyRequest
     /// Feature flag key (required) - stored in properties->featureFlagKey
     /// </summary>
     public required string FeatureFlagKey { get; init; }
+
+    /// <summary>
+    /// Delete events before this date (exclusive)
+    /// </summary>
+    public DateTime? BeforeDate { get; init; }
+
+    /// <summary>
+    /// Delete events after this date (inclusive) - used with BeforeDate for range
+    /// </summary>
+    public DateTime? AfterDate { get; init; }
 }
 
 /// <summary>

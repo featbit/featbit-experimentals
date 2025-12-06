@@ -17,7 +17,15 @@ The task involves identifying and removing events data that is no longer needed 
 
 # Solution
 
-## PostgreSQL
+Based on the different database solution you hosted your FeatBit instance, you may have the different way to delete the unused events data. 
+
+## Try it Online
+
+Before you read the following instructions, another fast way to understand how the solution works is to launch the projects `EventsCleanupApi` and `webapp` in the folder to try it online.
+
+## Database Solutions
+
+### PostgreSQL
 
 The data are stored in the table named `events` in PostgreSQL database. Below is the definition of the `events` table:
 
@@ -32,17 +40,13 @@ CREATE TABLE events (
 );
 ```
 
-### Data Examples
-
 Feature Flag Insights Data Example:
 
 | id | distinct_id | env_id | event | properties | timestamp |
 |----|-------------|--------|-------|------------|-----------|
 | c2186a72-d009-434a-bb1b-aa41f5fa2384 | ff23468c-dec2-4bca-af50-a90c32c15933 | e73fff7b-af28-46cb-b770-a006cb770e6d | FlagValue |{"envId": "e73fff7b-af28-46cb-b770-a006cb770e6d", "route": "/Variation/GetMultiOptionVariation", "tag_0": "featgen-demo-user-key", "tag_1": "83bb68d7-35ca-465c-815d-18c670953777", "tag_2": "true", "tag_3": "featgen-user", "flagId": "e73fff7b-af28-46cb-b770-a006cb770e6d-batch-project-creation", "userName": "featgen-user", "accountId": "", "projectId": "", "userKeyId": "featgen-demo-user-key", "variationId": "83bb68d7-35ca-465c-815d-18c670953777", "featureFlagKey": "batch-project-creation", "sendToExperiment": true} | 2025-10-02 15:51:24.326 |
 
-Custom Events Data Example:
-
-### Queries to Delete Unused Events Data
+Queries to Delete Unused Events Data
 
 Delete all flag insights data before a specific date:
 ```sql
@@ -68,10 +72,9 @@ WHERE project_id = '{project_id}';
 3. Delete events for those environment IDs. See the example above for environment-specific deletion.
 
 
+### MongoDB
 
-## MongoDB
-
-## ClickHouse 
+### ClickHouse 
 
 # Project Details
 

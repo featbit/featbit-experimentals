@@ -53,6 +53,8 @@ export function DeletePanel({ selection }: DeletePanelProps) {
           response = await api.previewDeleteByEnvFlagKey({
             envId: selection.id,
             featureFlagKey,
+            beforeDate: beforeDate || undefined,
+            afterDate: afterDate || undefined,
           });
         } else if (selection.type === 'project' && selection.envIds) {
           // For project, we need to call preview for each environment
@@ -61,6 +63,8 @@ export function DeletePanel({ selection }: DeletePanelProps) {
             const r = await api.previewDeleteByEnvFlagKey({
               envId,
               featureFlagKey,
+              beforeDate: beforeDate || undefined,
+              afterDate: afterDate || undefined,
             });
             total += r.eventsToDelete;
           }
@@ -122,6 +126,8 @@ export function DeletePanel({ selection }: DeletePanelProps) {
           response = await api.deleteByEnvFlagKey({
             envId: selection.id,
             featureFlagKey,
+            beforeDate: beforeDate || undefined,
+            afterDate: afterDate || undefined,
           });
         } else if (selection.type === 'project' && selection.envIds) {
           let total = 0;
@@ -129,6 +135,8 @@ export function DeletePanel({ selection }: DeletePanelProps) {
             const r = await api.deleteByEnvFlagKey({
               envId,
               featureFlagKey,
+              beforeDate: beforeDate || undefined,
+              afterDate: afterDate || undefined,
             });
             total += r.deletedCount;
           }

@@ -136,13 +136,32 @@ public class EventsCleanupService : IEventsCleanupService
 
     private IQueryable<Event> BuildEnvFlagKeyQuery(DeleteByEnvFlagKeyRequest request)
     {
-        // Query using PostgreSQL JSONB operator to filter by featureFlagKey in properties
-        return _db.Events
+        // Base query: environment + FlagValue + featureFlagKey in properties
+        var query = _db.Events
             .Where(e => e.EnvId == request.EnvId)
             .Where(e => e.EventType == "FlagValue")
             .Where(e => EF.Functions.JsonContains(
                 e.Properties!,
                 $"{{\"featureFlagKey\": \"{request.FeatureFlagKey}\"}}"));
+
+        // Apply timestamp filters if provided
+        if (request.BeforeDate.HasValue)
+        {
+            var utcDate = request.BeforeDate.Value.Kind == DateTimeKind.Unspecified
+                ? DateTime.SpecifyKind(request.BeforeDate.Value, DateTimeKind.Utc)
+                : request.BeforeDate.Value.ToUniversalTime();
+            query = query.Where(e => e.Timestamp < utcDate);
+        }
+
+        if (request.AfterDate.HasValue)
+        {
+            var utcDate = request.AfterDate.Value.Kind == DateTimeKind.Unspecified
+                ? DateTime.SpecifyKind(request.AfterDate.Value, DateTimeKind.Utc)
+                : request.AfterDate.Value.ToUniversalTime();
+            query = query.Where(e => e.Timestamp >= utcDate);
+        }
+
+        return query;
     }
 
     #endregion

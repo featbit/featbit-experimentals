@@ -76,13 +76,23 @@ export const api = {
     }),
 
   // By Environment & Feature Flag Key
-  previewDeleteByEnvFlagKey: (params: { envId: string; featureFlagKey: string }) =>
+  previewDeleteByEnvFlagKey: (params: {
+    envId: string;
+    featureFlagKey: string;
+    beforeDate?: string;
+    afterDate?: string;
+  }) =>
     fetchApi<PreviewDeleteResponse>('/api/events/by-env-flagkey/preview', {
       method: 'POST',
       body: JSON.stringify(params),
     }),
 
-  deleteByEnvFlagKey: (params: { envId: string; featureFlagKey: string }) =>
+  deleteByEnvFlagKey: (params: {
+    envId: string;
+    featureFlagKey: string;
+    beforeDate?: string;
+    afterDate?: string;
+  }) =>
     fetchApi<DeleteEventsResponse>('/api/events/by-env-flagkey', {
       method: 'DELETE',
       body: JSON.stringify(params),
