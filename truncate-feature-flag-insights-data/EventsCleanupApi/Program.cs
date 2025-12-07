@@ -2,12 +2,14 @@ using EventsCleanupApi.Data;
 using EventsCleanupApi.Endpoints;
 using EventsCleanupApi.Services;
 using EventsCleanupApi.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add Aspire service defaults (OpenTelemetry, health checks, service discovery, resilience)
+builder.AddServiceDefaults();
 
 // Configure JSON options for DateTime handling
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -24,20 +26,25 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 // Add services to the container.
 builder.Services.AddOpenApi();
 
-// Add CORS for React dev server
+// Add CORS for React dev server and Aspire dashboard
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactDev", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173")
+        policy.SetIsOriginAllowed(origin => 
+            {
+                var uri = new Uri(origin);
+                // Allow localhost with any port for development
+                return uri.Host == "localhost" || uri.Host == "127.0.0.1";
+            })
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
 
-// Add PostgreSQL DbContext
-builder.Services.AddDbContext<EventsDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL")));
+// Add PostgreSQL DbContext using Aspire integration
+// Connection string comes from appsettings.json -> ConnectionStrings.PostgreSQL
+builder.AddNpgsqlDbContext<EventsDbContext>("PostgreSQL");
 
 // Add application services
 builder.Services.AddScoped<IEventsCleanupService, EventsCleanupService>();
@@ -66,6 +73,9 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowReactDev");
 
 app.UseHttpsRedirection();
+
+// Map Aspire default endpoints (health checks, etc.)
+app.MapDefaultEndpoints();
 
 // Map endpoints
 app.MapHealthEndpoints();

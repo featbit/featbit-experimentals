@@ -10,7 +10,65 @@ However, over time, data accumulate in the database, leading to increased storag
 
 Based on the different database solution you hosted your FeatBit instance, you may have the different way to delete the insights data from the database.
 
-## Run the Solution
+## Run the Solution with .NET Aspire
+
+This project uses **.NET Aspire** for orchestration, making it easy to run all services together and deploy to Azure.
+
+### Prerequisites
+
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) or later
+- [Node.js 22+](https://nodejs.org/) and npm
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for PostgreSQL container)
+- [Azure Developer CLI (azd)](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd) (for Azure deployment)
+
+### Run Locally with Aspire
+
+1. **Install npm dependencies** for the webapp:
+   ```bash
+   cd webapp
+   npm install
+   cd ..
+   ```
+
+2. **Run the Aspire AppHost**:
+   ```bash
+   cd AppHost
+   dotnet run
+   ```
+
+3. The Aspire dashboard will open automatically, showing:
+   - **PostgreSQL** database with pgAdmin
+   - **EventsCleanupApi** - the backend API
+   - **webapp** - the React frontend (Vite dev server)
+
+4. Click on the endpoints in the dashboard to access each service.
+
+### Deploy to Azure
+
+This project is ready for deployment to **Azure Container Apps** using the Azure Developer CLI.
+
+1. **Initialize azd** (first time only):
+   ```bash
+   azd init
+   ```
+   Select "Use code in the current directory" and confirm the AppHost project.
+
+2. **Deploy to Azure**:
+   ```bash
+   azd up
+   ```
+   This will:
+   - Provision Azure Container Apps environment
+   - Create Azure Container Registry
+   - Build and push container images
+   - Deploy all services to Azure
+
+3. **Clean up resources** when done:
+   ```bash
+   azd down
+   ```
+
+### Alternative: Run Projects Individually
 
 Before you read the following instructions, another fast way to understand how the solution works is to launch the projects `EventsCleanupApi` and `webapp` in the folder to try it online.
 

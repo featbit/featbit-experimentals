@@ -5,7 +5,7 @@ import type {
   EventsSummary,
 } from '@/types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://localhost:7031';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
