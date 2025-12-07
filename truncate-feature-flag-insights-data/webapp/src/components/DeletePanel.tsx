@@ -240,7 +240,6 @@ export function DeletePanel({ selection }: DeletePanelProps) {
             >
               <option value="">All Events</option>
               <option value="FlagValue">FlagValue (Feature Flag Insights)</option>
-              <option value="CustomEvent">Custom Events</option>
             </select>
           </div>
 
