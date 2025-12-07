@@ -1,5 +1,9 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
+// Add Azure Container Apps environment when publishing to Azure
+// This enables deployment to Azure Container Apps using 'azd up' command
+var containerAppsEnv = builder.AddAzureContainerAppEnvironment("aca-env");
+
 // PostgreSQL connection string from AppHost appsettings.json / appsettings.Development.json
 // This will be passed to EventsCleanupApi as ConnectionStrings__PostgreSQL environment variable
 var postgres = builder.AddConnectionString("PostgreSQL");

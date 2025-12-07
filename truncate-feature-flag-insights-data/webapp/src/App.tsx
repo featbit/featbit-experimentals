@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { HierarchyTree } from '@/components/HierarchyTree';
 import { DeletePanel } from '@/components/DeletePanel';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { api } from '@/services/api';
 import type { WorkspaceDto, Selection } from '@/types';
 

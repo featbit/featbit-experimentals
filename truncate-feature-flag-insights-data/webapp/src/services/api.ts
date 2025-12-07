@@ -5,7 +5,9 @@ import type {
   EventsSummary,
 } from '@/types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+// Use VITE_API_URL from build time, or fallback to same-origin (empty string) for production
+// When API_BASE_URL is empty, requests will be made to the same origin with /api prefix
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
