@@ -6,81 +6,11 @@ Each time a feature flag is evaluated for a specified user (context instance), a
 
 However, over time, data accumulate in the database, leading to increased storage usage and potential performance degradation. To address this issue, this project demostrates how to truncate insights data from the database.
 
-# Solution
+# Solution Description
 
 Based on the different database solution you hosted your FeatBit instance, you may have the different way to delete the insights data from the database.
 
-## Run the Solution with .NET Aspire
-
-This project uses **.NET Aspire** for orchestration, making it easy to run all services together and deploy to Azure.
-
-### Prerequisites
-
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) or later
-- [Node.js 22+](https://nodejs.org/) and npm
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for PostgreSQL container)
-- [Azure Developer CLI (azd)](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd) (for Azure deployment)
-
-### Run Locally with Aspire
-
-1. **Install npm dependencies** for the webapp:
-   ```bash
-   cd webapp
-   npm install
-   cd ..
-   ```
-
-2. **Run the Aspire AppHost**:
-   ```bash
-   cd AppHost
-   dotnet run
-   ```
-
-3. The Aspire dashboard will open automatically, showing:
-   - **PostgreSQL** database with pgAdmin
-   - **EventsCleanupApi** - the backend API
-   - **webapp** - the React frontend (Vite dev server)
-
-4. Click on the endpoints in the dashboard to access each service.
-
-### Deploy to Azure
-
-This project is ready for deployment to **Azure Container Apps** using the Azure Developer CLI.
-
-1. **Initialize azd** (first time only):
-   ```bash
-   azd init
-   ```
-   Select "Use code in the current directory" and confirm the AppHost project.
-
-2. **Deploy to Azure**:
-   ```bash
-   azd up
-   ```
-   This will:
-   - Provision Azure Container Apps environment
-   - Create Azure Container Registry
-   - Build and push container images
-   - Deploy all services to Azure
-
-3. **Clean up resources** when done:
-   ```bash
-   azd down
-   ```
-
-### Alternative: Run Projects Individually
-
-Before you read the following instructions, another fast way to understand how the solution works is to launch the projects `EventsCleanupApi` and `webapp` in the folder to try it online.
-
-![Run the Solution](./webapp/public/images/run-the-solution-001.png)
-
-The running system is composed of two parts:
-- `EventsCleanupApi`: An Asp.NET Core Web API project that provides the backend API to preview and delete the insights data from the database.
-- `webapp`: A React + TypeScript + Vite project that provides the frontend UI to interact with the backend API.
-
-## Solution Description
-
-### PostgreSQL
+## PostgreSQL
 
 The data are stored in the table named `events` in PostgreSQL database. Below is the definition of the `events` table:
 
@@ -134,9 +64,20 @@ WHERE "event" = 'FlagValue'
   AND env_id IN ('c05804fe-c802-48f4-8602-b1321dcd8aaf', 'ff23468c-dec2-4bca-af50-a90c32c15933');
 ```
 
-For more information, you may run the projects defined in chapter "Run the Solution" to see how it works.
+
+For more information, you may following chapter **"Run the Solution"** to get more details.
 
 
-### MongoDB
+## MongoDB
 
-### ClickHouse 
+## ClickHouse 
+
+# Run the Solution with .NET Aspire
+
+This project uses **.NET Aspire** for orchestration, making it easy to run all services together and deploy to Azure. **Please check the README file in the `AppHost` folder for detailed instructions.**
+
+
+![Run the Solution](./webapp/public/images/run-the-solution-001.png)
+
+
+**For those who are not familiar with .NET and Azure technologies**, please see the following chapter "Solution Description" at the end of this document for more details about how to truncate the insights data from the database with SQL queries.

@@ -10,7 +10,7 @@
 
 ### Steps
 
-1. **Configure your FeatBit PostgreSQL connection** in `appsettings.Development.json`:
+1. **Configure your FeatBit PostgreSQL connection** in `appsettings.Development.json` or `appsettings.json` in the `AppHost` folder:
 
    ```json
    {
@@ -34,42 +34,13 @@
    dotnet run
    ```
 
+Or use Visual Studio to run the `AppHost` project.
+
 4. The **Aspire Dashboard** opens automatically with links to all services.
 
 ---
 
-## 2. Run in Local Docker
-
-### Prerequisites
-
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
-
-### Steps
-
-1. **Build and run with Docker Compose** (from solution root):
-
-   ```bash
-   # Build the API image
-   docker build -t eventscleanupapi -f EventsCleanupApi/Dockerfile .
-
-   # Build the webapp image
-   docker build -t webapp -f webapp/Dockerfile .
-
-   # Run with docker-compose (create docker-compose.yml if needed)
-   docker-compose up
-   ```
-
-   Or use **Aspire manifest** to generate Docker artifacts:
-
-   ```bash
-   cd AppHost
-   dotnet run -- --publisher manifest --output-path ../manifest.json
-   ```
-
----
-
-## 3. Deploy to Azure
+## 2. Deploy to Azure
 
 ### Prerequisites
 

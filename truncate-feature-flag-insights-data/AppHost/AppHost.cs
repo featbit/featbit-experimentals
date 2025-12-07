@@ -10,8 +10,6 @@ var api = builder.AddProject<Projects.EventsCleanupApi>("eventscleanupapi")
     .WithExternalHttpEndpoints();
 
 // Add the React webapp (Vite dev server)
-// For local development, runs `npm run dev`
-// For deployment, publishes as a Docker container
 var webapp = builder.AddViteApp("webapp", "../webapp")
     .WithReference(api)
     .WithEnvironment("VITE_API_URL", api.GetEndpoint("https"))
