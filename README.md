@@ -13,10 +13,8 @@ This situation is not compatible with FeatBit’s commitment to **Customer Succe
 **Experimentals** is a collection of independent feature applications generated or accelerated by AI, designed to solve real customer pain points immediately.
 
 These are **fully usable standalone projects**, not concept demos. They include:
-- Ready-to-run implementations
-- Full source code and documentation
-- Customization guidance
-- Real solution examples based on actual requirements
+- Implementation guidance leveraging FeatBit’s existing features, APIs, and data structures
+- Fully runnable reference implementations with source code and documentation
 
 Customers can deploy and use these applications right away without writing code themselves. If the applications not fully meet their needs, customers can modify or extend them as desired based on the provided tutorials and source code.
 
