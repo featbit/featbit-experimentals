@@ -1,14 +1,14 @@
-# FEATBIT EXPERIMENTALS
+# FeatBit Experimental Program
 
 ## Maximizing Innovation with AI Coding — Without Risking Core Product Stability
 
 AI Coding allows us to build complete features extremely fast. Many of these features directly solve specific customer problems. However, merging them into the core FeatBit product requires strict review and testing to maintain enterprise-level reliability. This can slow down the existing main development process, and delay delivering valuable features to customers.
 
-This situation is not compatible with FeatBit’s commitment to **Customer Success**, particularly in today’s fast-moving AI innovation landscape. To balance speed and stability, we created the **Experimentals** repository.
+This situation is not compatible with FeatBit’s commitment to **Customer Success**, particularly in today’s fast-moving AI innovation landscape. To balance speed and stability, we created the **FeatBit Experimental Program** repository.
 
 ---
 
-### What Experimentals Is
+### What FeatBit Experimental Program Is
 
 **Experimentals** is a collection of independent feature applications generated or accelerated by AI, designed to solve real customer pain points immediately.
 
