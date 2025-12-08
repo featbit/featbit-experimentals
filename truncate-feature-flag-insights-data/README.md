@@ -80,4 +80,5 @@ This project uses **.NET Aspire** for orchestration, making it easy to run all s
 ![Run the Solution](./webapp/public/images/run-the-solution-001.png)
 
 
-**For those who are not familiar with .NET and Azure technologies**, please see the following chapter "Solution Description" at the end of this document for more details about how to truncate the insights data from the database with SQL queries.
+
+**For those who are not familiar with .NET and Azure technologies**, please see the chapter "Solution Description" truncate the insights data from the database with SQL queries.
